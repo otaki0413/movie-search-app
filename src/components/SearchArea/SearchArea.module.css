@@ -1,0 +1,35 @@
+.searchArea {
+  display: flex;
+  justify-content: center;
+}
+
+.searchForm {
+  display: flex;
+  gap: 1rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-weight: bold;
+}
+
+.input {
+  padding: 0.5rem;
+  border: 1px solid #000;
+  width: 250px;
+  height: 40px;
+  outline: none;
+}
+
+.select {
+  padding: 0.5rem;
+  border: 1px solid #000;
+  width: 200px;
+  height: 40px;
+  outline: none;
+}
