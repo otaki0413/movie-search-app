@@ -1,0 +1,44 @@
+/* リセットCSS読込 */
+@import "./_reset.css";
+
+/* ベースのフォントとカラー設定 */
+:root {
+  --font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --color-text: #000;
+  --color-bg: #fff;
+  --color-primary: #007bff;
+
+  /* レスポンシブのためのブレイクポイント */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+}
+
+body {
+  font-family: var(--font-family);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  min-height: 100vh;
+  padding: 0;
+}
+
+/* リンクのデフォルトスタイル */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* ボタンの基本スタイル */
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* ユーティリティ（あれば追加する） */
+.hidden {
+  display: none !important;
+}
