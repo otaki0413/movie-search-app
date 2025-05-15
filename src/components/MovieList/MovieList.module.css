@@ -1,25 +1,34 @@
-/* モバイルファースト: デフォルトは2カラム */
+.movieListContainer {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.movieCount {
+  text-align: center;
+}
+
+.alertText {
+  text-align: center;
+}
+
 .movieList {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
-  padding: 1rem;
-  max-width: 1200px;
-  margin: 0 auto;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
 }
 
-/* タブレット（横向き）: 3カラム */
-@media (min-width: 768px) {
-  .movieList {
-    grid-template-columns: repeat(3, 1fr);
-  }
+.movieButtonArea {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
 }
 
-/* デスクトップ: 4カラム */
-@media (min-width: 1024px) {
-  .movieList {
-    grid-template-columns: repeat(4, 1fr);
-  }
+.movieReadButton {
+  padding: 0.5rem 1rem;
+  background-color: #000;
+  color: white;
+  border: none;
 }
 
 .card {
@@ -27,17 +36,16 @@
   overflow: hidden;
   transition: transform 0.2s;
   border: 1px solid #000;
-  min-width: 200px;
 }
 
 .thumbnail {
   width: 100%;
-  height: 200px;
+  height: 150px;
   object-fit: cover;
 }
 
 .content {
-  padding: 1rem;
+  padding: 0.75rem;
 }
 
 .title {

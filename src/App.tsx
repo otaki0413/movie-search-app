@@ -1,13 +1,12 @@
 import { MainLayout } from "./components/Layout/MainLayout";
 import { MovieList } from "./components/MovieList/MovieList";
-import { SearchArea } from "./components/SearchArea/SearchArea";
+import { Search } from "./components/Search/Search";
 
 function App() {
   return (
     <MainLayout>
-      <SearchArea />
+      <Search />
       <MovieList movies={MOCK_MOVIES} />
-      <div>映画読込ボタン</div>
     </MainLayout>
   );
 }

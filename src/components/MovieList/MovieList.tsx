@@ -5,13 +5,24 @@ import styles from "./MovieList.module.css";
 type MovieListProps = {
   movies: Movie[];
 };
-
 export const MovieList: FC<MovieListProps> = ({ movies }) => {
   return (
-    <div className={styles.movieList}>
-      {movies.map((movie) => (
-        <MovieCard key={movie.id} movie={movie} />
-      ))}
+    <div className={styles.movieListContainer}>
+      <div className={styles.movieCount}>検索結果：{movies.length}件</div>
+      {movies.length === 0 ? (
+        <p className={styles.alertText}>該当する映画が見つかりませんでした。</p>
+      ) : (
+        <>
+          <div className={styles.movieList}>
+            {movies.map((movie) => (
+              <MovieCard key={movie.id} movie={movie} />
+            ))}
+          </div>
+          <div className={styles.movieButtonArea}>
+            <button className={styles.movieReadButton}>More Read</button>
+          </div>
+        </>
+      )}
     </div>
   );
 };

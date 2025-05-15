@@ -7,7 +7,7 @@ type MainLayoutProps = {
 
 export const MainLayout: FC<MainLayoutProps> = ({ children }) => {
   return (
-    <div className={styles.layout}>
+    <div className={styles.container}>
       <header className={styles.header}>
         <h1 className={styles.headerTitle}>Movie Search App</h1>
       </header>

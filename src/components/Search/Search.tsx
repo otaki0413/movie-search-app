@@ -1,10 +1,10 @@
-import styles from "./SearchArea.module.css";
+import styles from "./Search.module.css";
 
-export const SearchArea = () => {
+export const Search = () => {
   const years = [2020, 2021, 2022, 2023, 2024];
 
   return (
-    <div className={styles.searchArea}>
+    <div className={styles.searchContainer}>
       <div className={styles.searchForm}>
         <div className={styles.formGroup}>
           <label htmlFor="movieTitle" className={styles.label}>
