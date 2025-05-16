@@ -1,10 +1,4 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import dotenv from "dotenv";
-
-// ローカル環境の場合、.env.localの環境変数を読み込む
-if (process.env.NODE_ENV !== "production") {
-  dotenv.config({ path: ".env.local" });
-}
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // リクエストパラメータを取得
