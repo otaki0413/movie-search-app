@@ -1,0 +1,22 @@
+/**
+ * Vercel の Serverless Functions（Node.js ランタイム）用の tsconfig
+ *
+ * このファイルがないと、api ディレクトリ配下の .ts ファイルが
+ * CommonJS として解釈され、"exports is not defined in ES module scope" エラーが発生する。
+ *
+ * 本設定により、api ディレクトリ内の .ts ファイルを ESM（ES Modules）として解釈させる。
+ *
+ * 参考:
+ * - https://github.com/vercel/vercel/discussions/10317
+ * - https://vercel.com/docs/functions/runtimes/node-js
+ */
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2023"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "strict": true
+  }
+}
