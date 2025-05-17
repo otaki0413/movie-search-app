@@ -1,8 +1,21 @@
+import type { FC } from "react";
 import styles from "./Search.module.css";
 
-export const Search = () => {
-  const years = [2020, 2021, 2022, 2023, 2024];
+const YEARS = [2020, 2021, 2022, 2023, 2024] as const;
 
+type SearchProps = {
+  keyword: string;
+  year: string;
+  onKeywordChange: (value: string) => void;
+  onYearChange: (value: string) => void;
+};
+
+export const Search: FC<SearchProps> = ({
+  keyword,
+  year,
+  onKeywordChange,
+  onYearChange,
+}) => {
   return (
     <div className={styles.searchContainer}>
       <div className={styles.searchForm}>
@@ -13,6 +26,8 @@ export const Search = () => {
           <input
             type="text"
             id="movieTitle"
+            value={keyword}
+            onChange={(e) => onKeywordChange(e.target.value)}
             className={styles.input}
             placeholder="映画タイトルを入力"
           />
@@ -21,9 +36,14 @@ export const Search = () => {
           <label htmlFor="releaseYear" className={styles.label}>
             Release Year
           </label>
-          <select id="releaseYear" className={styles.select}>
+          <select
+            id="releaseYear"
+            value={year}
+            onChange={(e) => onYearChange(e.target.value)}
+            className={styles.select}
+          >
             <option value="">選択してください</option>
-            {years.map((year) => (
+            {YEARS.map((year) => (
               <option key={year} value={year}>
                 {year}年
               </option>

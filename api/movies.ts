@@ -15,38 +15,47 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: "Keyword parameter is required" });
   }
 
-  // URLオブジェクトを作成（APIのエンドポイントを設定する）
-  const API_URL = new URL("https://api.themoviedb.org/3/search/movie");
-
-  // キーワードをクエリパラメータに追加
-  API_URL.searchParams.append("query", keyword);
-  // 公開年の指定がある場合は、クエリパラメータに追加
-  if (year && typeof year === "string") {
-    API_URL.searchParams.append("primary_release_year", year);
+  // 環境変数からアクセストークンを取得
+  const token = process.env.TMDB_ACCESS_TOKEN;
+  if (!token) {
+    console.error("TMDB_ACCESS_TOKEN is not defined");
+    return res.status(500).json({ error: "Missing TMDB access token" });
   }
 
-  try {
-    // 環境変数からアクセストークンを取得
-    const token = process.env.TMDB_ACCESS_TOKEN;
-    if (!token) {
-      console.error("TMDB_ACCESS_TOKEN is not defined");
-      return res.status(500).json({ error: "Missing TMDB access token" });
-    }
+  // 映画検索用とジャンル取得用のAPIエンドポイントを設定
+  const MOVIE_URL = new URL("https://api.themoviedb.org/3/search/movie");
+  const GENRE_URL = new URL("https://api.themoviedb.org/3/genre/movie/list");
 
-    // APIリクエスト（アクセストークンをヘッダー付与）
-    const response = await fetch(API_URL.toString(), {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-    if (!response.ok) {
-      return res.status(response.status).json({ error: "TMDB API error" });
+  // 映画検索用のURLにクエリパラメータを追加
+  MOVIE_URL.searchParams.append("query", keyword);
+  if (year && typeof year === "string") {
+    MOVIE_URL.searchParams.append("primary_release_year", year);
+  }
+
+  // 共通のリクエストヘッダーを設定（アクセストークン付与）
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
+  };
+
+  try {
+    // APIリクエスト（映画とジャンルを並行取得）
+    const [moviesResponse, genresResponse] = await Promise.all([
+      fetch(MOVIE_URL, { headers }),
+      fetch(GENRE_URL, { headers }),
+    ]);
+
+    if (!moviesResponse.ok || !genresResponse.ok) {
+      throw new Error("TMDB API error");
     }
 
     // レスポンスデータをJSON形式で取得
-    const data = await response.json();
-    res.status(200).json(data);
+    const [moviesData, genresData] = await Promise.all([
+      moviesResponse.json(),
+      genresResponse.json(),
+    ]);
+
+    res.status(200).json({ moviesData, genres: genresData.genres });
   } catch (error) {
     console.error("Fetch error:", error);
     res.status(500).json({ error: "Internal Server Error" });
