@@ -1,5 +1,11 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
+// ローカル環境では、.env.localから環境変数を読み込む
+if (process.env.NODE_ENV !== "production") {
+  const dotenv = await import("dotenv");
+  dotenv.config({ path: ".env.local" });
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // リクエストパラメータを取得
   const { keyword, year } = req.query;

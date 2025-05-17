@@ -13,9 +13,9 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["ES2023"],
+    "lib": ["ESNext", "DOM"], // URL や fetch などブラウザ環境の API の型定義を含める
     "module": "ESNext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "noEmit": true,
     "strict": true
   }
