@@ -8,11 +8,21 @@ if (process.env.NODE_ENV !== "production") {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // リクエストパラメータを取得
-  const { keyword, year } = req.query;
+  const { keyword, year, page } = req.query;
 
   // 必須パラメータのチェック
   if (!keyword || typeof keyword !== "string") {
     return res.status(400).json({ error: "Keyword parameter is required" });
+  }
+
+  // ページのチェック（※APIの仕様上、1以上500以下の整数である必要がある）
+  if (page && typeof page === "string") {
+    const pageNum = Number(page);
+    if (isNaN(pageNum) || pageNum < 1 || pageNum > 500) {
+      return res
+        .status(400)
+        .json({ error: "Page parameter must be between 1 and 500" });
+    }
   }
 
   // 環境変数からアクセストークンを取得
@@ -30,6 +40,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   MOVIE_URL.searchParams.append("query", keyword);
   if (year && typeof year === "string") {
     MOVIE_URL.searchParams.append("primary_release_year", year);
+  }
+  if (page && typeof page === "string") {
+    MOVIE_URL.searchParams.append("page", page);
   }
 
   // 共通のリクエストヘッダーを設定（アクセストークン付与）

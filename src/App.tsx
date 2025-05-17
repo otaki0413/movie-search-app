@@ -8,14 +8,14 @@ import { useMovies } from "./hooks/useMovies";
 function App() {
   const [keyword, setKeyword] = useState("");
   const [year, setYear] = useState("");
-  const { movies, isLoading, error } = useMovies(keyword, year);
+  const { movies, isLoading, error, loadMore } = useMovies(keyword, year);
 
   const renderContent = () => {
     if (isLoading) return <Message>Loading...</Message>;
     if (error) return <Message>{error}</Message>;
     if (!keyword)
       return <Message>検索フォームからキーワードを入力してください</Message>;
-    return <MovieList movies={movies} />;
+    return <MovieList movies={movies} loadMore={loadMore} />;
   };
 
   return (

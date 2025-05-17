@@ -4,8 +4,9 @@ import styles from "./MovieList.module.css";
 
 type MovieListProps = {
   movies: Movie[];
+  loadMore: () => void;
 };
-export const MovieList: FC<MovieListProps> = ({ movies }) => {
+export const MovieList: FC<MovieListProps> = ({ movies, loadMore }) => {
   return (
     <div className={styles.movieListContainer}>
       <div className={styles.movieCount}>検索結果：{movies.length}件</div>
@@ -19,7 +20,9 @@ export const MovieList: FC<MovieListProps> = ({ movies }) => {
             ))}
           </div>
           <div className={styles.movieButtonArea}>
-            <button className={styles.movieReadButton}>More Read</button>
+            <button onClick={loadMore} className={styles.movieReadButton}>
+              More Read
+            </button>
           </div>
         </>
       )}
