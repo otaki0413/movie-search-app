@@ -54,9 +54,9 @@ export const useMovies = (keyword: string, year: string) => {
           (movie: TMDBMovie) => ({
             id: movie.id,
             title: movie.title,
-            thumbnail: movie.poster_path
-              ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-              : "",
+            thumbnail:
+              movie.poster_path &&
+              `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
             releaseDate: movie.release_date,
             genres: movie.genre_ids.map((id) => genreMap.get(id) || ""),
           })
