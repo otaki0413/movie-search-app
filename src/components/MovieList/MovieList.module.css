@@ -1,0 +1,75 @@
+.movieListContainer {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.movieCount {
+  text-align: center;
+}
+
+.alertText {
+  text-align: center;
+}
+
+.movieList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.movieButtonArea {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.movieReadButton {
+  padding: 0.5rem 1rem;
+  background-color: #000;
+  color: white;
+  border: none;
+}
+
+.card {
+  background: white;
+  overflow: hidden;
+  transition: transform 0.2s;
+  border: 1px solid #000;
+}
+
+.thumbnail {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.content {
+  padding: 0.75rem;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.releaseDate {
+  font-size: 0.875rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.genre {
+  background-color: #f3f4f6;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  color: #374151;
+}

@@ -1,34 +1,38 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+import { Message } from "./components/Common/Message";
+import { MainLayout } from "./components/Layout/MainLayout";
+import { MovieList } from "./components/MovieList/MovieList";
+import { Search } from "./components/Search/Search";
+import { useDebounce } from "./hooks/useDebounce";
+import { useMovies } from "./hooks/useMovies";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [keyword, setKeyword] = useState("");
+  const debouncedKeyword = useDebounce(keyword, 500);
+  const [year, setYear] = useState("");
+  const { movies, isLoading, error, loadMore } = useMovies(
+    debouncedKeyword,
+    year
+  );
+
+  const renderContent = () => {
+    if (isLoading) return <Message>Loading...</Message>;
+    if (error) return <Message>{error}</Message>;
+    if (!debouncedKeyword)
+      return <Message>検索フォームからキーワードを入力してください</Message>;
+    return <MovieList movies={movies} loadMore={loadMore} />;
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <MainLayout>
+      <Search
+        keyword={keyword}
+        year={year}
+        onKeywordChange={setKeyword}
+        onYearChange={setYear}
+      />
+      {renderContent()}
+    </MainLayout>
   );
 }
 

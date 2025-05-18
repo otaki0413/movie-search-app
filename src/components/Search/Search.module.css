@@ -1,0 +1,39 @@
+.searchContainer {
+  display: flex;
+  justify-content: start;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.searchForm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-weight: bold;
+}
+
+.input {
+  padding: 0.5rem;
+  border: 1px solid #000;
+  width: 200px;
+  height: 40px;
+  outline: none;
+}
+
+.select {
+  padding: 0.5rem;
+  border: 1px solid #000;
+  width: 200px;
+  height: 40px;
+  outline: none;
+}
