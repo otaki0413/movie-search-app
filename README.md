@@ -2,8 +2,9 @@
 
 ## 概要
 
-TMDB APIを使用した映画検索アプリ
-キーワードとリリース年を指定して映画を検索することができる
+TMDB APIを使用した映画検索アプリ。
+
+キーワードとリリース年を指定して映画を検索することができます。
 
 ## URL
 
@@ -57,8 +58,8 @@ https://movie-search-app-lilac-psi.vercel.app/
 
 ## APIキー等の機密情報の管理について
 
-- フロントエンドがVite・ReactのSPA構成のため、APIキー等はフロントエンドに露出しないようにする必要があります。
-- 機密情報は **Vercelの環境変数** に設定し、**Serverless Functions 経由でTMDB APIにアクセス**するように設定しています。
+- フロントエンドをVite・ReactのSPA構成としたため、APIキー等はフロントエンドに露出しないようにする必要がありました。
+- 機密情報はVercelの環境変数に設定し、Serverless Functions 経由でTMDB APIにアクセスするように設定しました。
 
 ## セットアップ手順
 
@@ -89,9 +90,9 @@ npm install
 
 ① 初回デプロイ（必須）
 
-- Vercel Serverless Functionsを使用するため、プロジェクトをVercelにデプロイする必要があります。
-- Vercelのダッシュボード または Vercel CLI でデプロイします。
-- Vercel CLIを使用する場合は、以下のコマンドを実行
+- Vercel Serverless Functionsを使用するため、プロジェクトを事前にVercelにデプロイする必要があります。
+- Vercelのダッシュボード上 または Vercel CLI でデプロイします。
+- Vercel CLIを使用する場合は、以下のコマンドを実行します。
 
 ```bash
 vercel
@@ -119,11 +120,9 @@ npm run dev:vercel
 npm run dev:full:vercel
 ```
 
-- `npm run dev` でViteの開発サーバーを起動することも可能ですが、TMDB APIへのリクエストはVercelのServerless Functionsを経由する必要があるため、`package.json`のスクリプトを追記しました。
-
 ## 開発時に使用するコマンド
 
-`package.json` に記載した主なスクリプト
+`package.json` に記載した主なスクリプトは以下の通りです。
 
 | コマンド                  | 用途                                         |
 | ------------------------- | -------------------------------------------- |
