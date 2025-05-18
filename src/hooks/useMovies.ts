@@ -4,8 +4,14 @@ import type { TMDBApiResponse, TMDBMovie, TMDBGenre } from "../types/api/tmdb";
 
 export const useMovies = (keyword: string, year: string) => {
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [pageNum, setPageNum] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // 検索条件が変更したとき、ページ数を1に戻す
+    setPageNum(1);
+  }, [keyword, year]);
 
   useEffect(() => {
     // キーワードが空の場合は、検索結果をクリア
@@ -13,11 +19,13 @@ export const useMovies = (keyword: string, year: string) => {
       setMovies([]);
       return;
     }
-    // ローディング開始
-    setIsLoading(true);
-    setError(null);
 
+    // 映画データの取得処理
     const fetchMovies = async () => {
+      // ローディング開始
+      setIsLoading(true);
+      setError(null);
+
       try {
         // APIリクエスト用のURLパラメータを生成
         const params = new URLSearchParams();
@@ -25,6 +33,7 @@ export const useMovies = (keyword: string, year: string) => {
         if (year) {
           params.append("year", year);
         }
+        params.append("page", String(pageNum));
 
         // APIリクエスト実行
         const response = await fetch(`/api/movies?${params}`);
@@ -45,14 +54,17 @@ export const useMovies = (keyword: string, year: string) => {
           (movie: TMDBMovie) => ({
             id: movie.id,
             title: movie.title,
-            thumbnail: movie.poster_path
-              ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-              : "",
+            thumbnail:
+              movie.poster_path &&
+              `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
             releaseDate: movie.release_date,
             genres: movie.genre_ids.map((id) => genreMap.get(id) || ""),
           })
         );
-        setMovies(formattedMovies);
+        // ページ数に応じた映画データの格納（ページ版号）
+        setMovies((prev) =>
+          pageNum === 1 ? formattedMovies : [...prev, ...formattedMovies]
+        );
       } catch (err) {
         console.error(err);
         if (err instanceof Error) {
@@ -67,7 +79,12 @@ export const useMovies = (keyword: string, year: string) => {
       }
     };
     fetchMovies();
-  }, [keyword, year]);
+  }, [keyword, year, pageNum]);
 
-  return { movies, isLoading, error };
+  return {
+    movies,
+    isLoading,
+    error,
+    loadMore: () => setPageNum((prev) => prev + 1),
+  };
 };
