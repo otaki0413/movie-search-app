@@ -5,8 +5,13 @@ import styles from "./MovieList.module.css";
 type MovieListProps = {
   movies: Movie[];
   loadMore: () => void;
+  hasMorePages: boolean;
 };
-export const MovieList: FC<MovieListProps> = ({ movies, loadMore }) => {
+export const MovieList: FC<MovieListProps> = ({
+  movies,
+  loadMore,
+  hasMorePages,
+}) => {
   return (
     <div className={styles.movieListContainer}>
       <div className={styles.movieCount}>検索結果：{movies.length}件</div>
@@ -19,11 +24,14 @@ export const MovieList: FC<MovieListProps> = ({ movies, loadMore }) => {
               <MovieCard key={movie.id} movie={movie} />
             ))}
           </div>
-          <div className={styles.movieButtonArea}>
-            <button onClick={loadMore} className={styles.movieReadButton}>
-              More Read
-            </button>
-          </div>
+
+          {hasMorePages && (
+            <div className={styles.movieButtonArea}>
+              <button onClick={loadMore} className={styles.movieReadButton}>
+                More Read
+              </button>
+            </div>
+          )}
         </>
       )}
     </div>
