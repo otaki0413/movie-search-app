@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { CacheChecker } from "./components/Common/CacheChecker";
 import { Message } from "./components/Common/Message";
 import { MainLayout } from "./components/Layout/MainLayout";
 import { MovieList } from "./components/MovieList/MovieList";
@@ -29,6 +30,9 @@ function App() {
     );
   };
 
+  // 開発環境でのみCacheCheckerを表示
+  const isDev = process.env.NODE_ENV === "development";
+
   return (
     <MainLayout>
       <Search
@@ -37,6 +41,7 @@ function App() {
         onKeywordChange={setKeyword}
         onYearChange={setYear}
       />
+      {isDev && <CacheChecker />}
       {renderContent()}
     </MainLayout>
   );
