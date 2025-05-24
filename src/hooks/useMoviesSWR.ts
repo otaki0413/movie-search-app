@@ -1,7 +1,6 @@
-import { useState, useEffect, useTransition, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import useSWR from "swr";
-import type { Movie } from "../types";
-import type { TMDBApiResponse, TMDBGenre, TMDBMovie } from "../types/api/tmdb";
+import type { TMDBApiResponse } from "../types/api/app";
 
 // SWRのfetcher関数
 const fetcher = async (url: string) => {
@@ -9,10 +8,10 @@ const fetcher = async (url: string) => {
     console.log(`🔍 APIリクエスト実行: ${url}`);
     const res = await fetch(url);
     if (!res.ok) {
-      throw new Error("APIリクエストに失敗しました");
+      throw new Error(`APIエラー: ${res.status} ${res.statusText}`);
     }
     const data = await res.json();
-    console.log(`✅ APIレスポンス受信: ${url}`);
+    console.log(`✅ APIレスポンス受信`);
     return data;
   } catch (error) {
     console.error("API Error:", error);
@@ -21,93 +20,57 @@ const fetcher = async (url: string) => {
 };
 
 export function useMoviesSWR(keyword: string, year: string) {
-  const [movies, setMovies] = useState<Movie[]>([]);
   const [page, setPage] = useState(1);
-  const [isPending, startTransition] = useTransition();
 
-  // APIリクエスト用のURLパラメータを生成
-  const params = new URLSearchParams();
-  if (keyword.trim()) {
-    params.append("keyword", keyword.trim());
-    if (year.trim()) {
-      params.append("year", year.trim());
+  const trimmedKeyword = keyword.trim();
+  const trimmedYear = year.trim();
+
+  // ベースの検索条件を生成
+  const baseParams = useMemo(() => {
+    if (!trimmedKeyword) {
+      return null;
     }
-    params.append("page", String(page));
-  }
+    const params = new URLSearchParams();
+    params.set("keyword", trimmedKeyword);
+    if (trimmedYear) {
+      params.set("year", trimmedYear);
+    }
+    return params;
+  }, [trimmedKeyword, trimmedYear]);
 
-  // SWRのキー生成
-  const searchKey = keyword.trim() ? `/api/movies?${params}` : null;
+  // 検索キー生成（検索条件とページ数を組み合わせる）
+  const swrKey = useMemo(() => {
+    if (!baseParams) {
+      return null;
+    }
+    return `/api/movies?${baseParams.toString()}&page=${page}`;
+  }, [baseParams, page]);
 
   // SWRでデータ取得
-  const { data, error, isLoading } = useSWR<TMDBApiResponse>(
-    searchKey,
+  const { data, error, isLoading, isValidating } = useSWR<TMDBApiResponse>(
+    swrKey,
     fetcher,
     {
-      revalidateIfStale: false, // 古いデータでも再利用（キャッシュ優先）
-      revalidateOnFocus: false, // フォーカス時に再取得しない
-      revalidateOnReconnect: false, // ネットワーク再接続時に再取得しない
-      dedupingInterval: 300000, // 5分間は連続して同じリクエストをしない
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      dedupingInterval: 300000,
+      keepPreviousData: true,
     }
   );
 
-  // 検索条件が変わったらリセット
-  useEffect(() => {
-    setPage(1);
-    setMovies([]);
-  }, [keyword, year]);
-
-  // 映画データ処理
-  useEffect(() => {
-    if (!data) return;
-
-    // useTransitionを利用して、重い処理をノンブロッキングで実行
-    startTransition(() => {
-      // ジャンルIDとジャンル名のマッピングを作成
-      const genreMap = new Map<number, string>();
-      data.genres.forEach((genre: TMDBGenre) => {
-        genreMap.set(genre.id, genre.name);
-      });
-
-      // APIレスポンスの映画データをアプリケーション用に整形
-      const formattedMovies = data.moviesData.results.map(
-        (movie: TMDBMovie) => ({
-          id: movie.id,
-          title: movie.title,
-          thumbnail: movie.poster_path
-            ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-            : undefined,
-          releaseDate: movie.release_date,
-          genres: movie.genre_ids.map((id) => genreMap.get(id) || ""),
-        })
-      );
-
-      // ページ数に応じて、映画データ更新
-      setMovies((prev) =>
-        page === 1 ? formattedMovies : [...prev, ...formattedMovies]
-      );
-    });
-  }, [data, page]);
-
-  // データ追加読み込み処理
+  // 追加読み込み処理
   const loadMore = useCallback(() => {
-    if (
-      data?.moviesData &&
-      data.moviesData.page < data.moviesData.total_pages
-    ) {
+    if (data?.movies && page < data.total_pages) {
       setPage((prev) => prev + 1);
     }
-  }, [data?.moviesData]);
-
-  // 次のページがあるかどうかの判定
-  const hasMorePages = Boolean(
-    data?.moviesData && data.moviesData.page < data.moviesData.total_pages
-  );
+  }, [data, page]);
 
   return {
-    movies,
-    isLoading: isLoading || isPending,
+    movies: data?.movies || [],
+    isLoading: (isLoading && page === 1) || isValidating,
     error: error instanceof Error ? error.message : null,
     loadMore,
-    hasMorePages,
+    hasMorePages: Boolean(data?.movies && page < data.total_pages),
   };
 }
