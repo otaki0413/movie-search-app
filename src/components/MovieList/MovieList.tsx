@@ -1,12 +1,20 @@
 import type { FC } from "react";
-import type { Movie } from "../../types";
+import type { EnrichedMovie } from "../../types/api/app";
+import { Spinner } from "../Common/Spinner";
 import styles from "./MovieList.module.css";
 
 type MovieListProps = {
-  movies: Movie[];
+  movies: EnrichedMovie[];
   loadMore: () => void;
+  hasMorePages: boolean;
+  isLoadingMore: boolean;
 };
-export const MovieList: FC<MovieListProps> = ({ movies, loadMore }) => {
+export const MovieList: FC<MovieListProps> = ({
+  movies,
+  loadMore,
+  hasMorePages,
+  isLoadingMore = false,
+}) => {
   return (
     <div className={styles.movieListContainer}>
       <div className={styles.movieCount}>検索結果：{movies.length}件</div>
@@ -19,11 +27,14 @@ export const MovieList: FC<MovieListProps> = ({ movies, loadMore }) => {
               <MovieCard key={movie.id} movie={movie} />
             ))}
           </div>
-          <div className={styles.movieButtonArea}>
-            <button onClick={loadMore} className={styles.movieReadButton}>
-              More Read
-            </button>
-          </div>
+          {isLoadingMore && <Spinner>Loading...</Spinner>}
+          {hasMorePages && !isLoadingMore && (
+            <div className={styles.movieButtonArea}>
+              <button onClick={loadMore} className={styles.movieReadButton}>
+                もっと見る
+              </button>
+            </div>
+          )}
         </>
       )}
     </div>
@@ -31,7 +42,7 @@ export const MovieList: FC<MovieListProps> = ({ movies, loadMore }) => {
 };
 
 type MovieCardProps = {
-  movie: Movie;
+  movie: EnrichedMovie;
 };
 
 const MovieCard: FC<MovieCardProps> = ({ movie }) => {

@@ -1,4 +1,11 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
+import type { TMDBApiResponse, EnrichedMovie } from "../src/types/api/app";
+import {
+  TMDBMoviesResponse,
+  TMDBGenresResponse,
+  TMDBGenre,
+  TMDBMovie,
+} from "./../src/types/api/tmdb";
 
 // ローカル環境では、.env.localから環境変数を読み込む
 if (process.env.NODE_ENV !== "production") {
@@ -64,11 +71,34 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // レスポンスデータをJSON形式で取得
     const [moviesData, genresData] = await Promise.all([
-      moviesResponse.json(),
-      genresResponse.json(),
+      moviesResponse.json() as Promise<TMDBMoviesResponse>,
+      genresResponse.json() as Promise<TMDBGenresResponse>,
     ]);
 
-    res.status(200).json({ moviesData, genres: genresData.genres });
+    // ジャンルIDとジャンル名のマッピング処理
+    const genreMap = new Map<number, string>();
+    genresData.genres.forEach((genre: TMDBGenre) => {
+      genreMap.set(genre.id, genre.name);
+    });
+
+    // 映画データの整形
+    const formattedMovies = moviesData.results.map((movie: TMDBMovie) => {
+      return {
+        id: movie.id,
+        title: movie.title,
+        thumbnail: movie.poster_path
+          ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+          : "/no-image.png",
+        releaseDate: movie.release_date,
+        genres: movie.genre_ids.map((id) => genreMap.get(id) || ""),
+      };
+    });
+
+    // レスポンスを返す
+    res.status(200).json({
+      movies: formattedMovies as EnrichedMovie[],
+      total_pages: moviesData.total_pages,
+    } satisfies TMDBApiResponse);
   } catch (error) {
     console.error("Fetch error:", error);
     res.status(500).json({ error: "Internal Server Error" });
