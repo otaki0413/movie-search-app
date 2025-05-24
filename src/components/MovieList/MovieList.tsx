@@ -1,18 +1,19 @@
 import type { FC } from "react";
 import type { EnrichedMovie } from "../../types/api/app";
+import { Spinner } from "../Common/Spinner";
 import styles from "./MovieList.module.css";
 
 type MovieListProps = {
   movies: EnrichedMovie[];
   loadMore: () => void;
   hasMorePages: boolean;
-  isLoadingMore?: boolean;
+  isLoadingMore: boolean;
 };
 export const MovieList: FC<MovieListProps> = ({
   movies,
   loadMore,
   hasMorePages,
-  isLoadingMore,
+  isLoadingMore = false,
 }) => {
   return (
     <div className={styles.movieListContainer}>
@@ -26,11 +27,11 @@ export const MovieList: FC<MovieListProps> = ({
               <MovieCard key={movie.id} movie={movie} />
             ))}
           </div>
-
-          {hasMorePages && (
+          {isLoadingMore && <Spinner>Loading...</Spinner>}
+          {hasMorePages && !isLoadingMore && (
             <div className={styles.movieButtonArea}>
               <button onClick={loadMore} className={styles.movieReadButton}>
-                {isLoadingMore ? "読み込み中..." : "もっと見る"}
+                もっと見る
               </button>
             </div>
           )}
