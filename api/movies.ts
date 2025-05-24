@@ -88,7 +88,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         title: movie.title,
         thumbnail: movie.poster_path
           ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-          : "/public/vite.svg",
+          : "/no-Image.png",
         releaseDate: movie.release_date,
         genres: movie.genre_ids.map((id) => genreMap.get(id) || ""),
       };
